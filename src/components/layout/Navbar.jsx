@@ -1,73 +1,47 @@
-import { colors, fonts } from "../../styles/theme";
+import { Link } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 
-export default function Navbar({ activePage = "interview" }) {
-  const links = [
-    { label: "Interview", page: "interview" },
-    { label: "Voice", page: "voice" },
-    { label: "Resume", page: "resume" },
-    { label: "Report", page: "report" },
-  ];
-
+export default function Navbar() {
   return (
-    <nav style={{
-      background: colors.white,
-      borderBottom: `1px solid ${colors.border}`,
-      padding: "0 48px",
-      height: 64,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      position: "sticky",
-      top: 0,
-      zIndex: 100,
-      boxShadow: "0 1px 0 #e0dfd8",
-    }}>
-      {/* Logo */}
-      <div style={{
-        fontFamily: fonts.display,
-        fontWeight: 800,
-        fontSize: 20,
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        cursor: "pointer",
-      }}>
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: colors.orange }} />
-        PrepAI
-      </div>
+    <header className="sticky top-0 z-50 border-b border-slate-800 bg-[#0a0f1c]/80 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="rounded-xl bg-cyan-400/15 p-2 text-cyan-400">
+            <Sparkles size={20} />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white">PrepAxis</h1>
+            <p className="text-xs text-slate-400">AI Interview Coach</p>
+          </div>
+        </Link>
 
-      {/* Nav Links */}
-      <div style={{ display: "flex", gap: 4 }}>
-        {links.map(l => (
-          <a key={l.page} href={`#${l.page}`} style={{
-            padding: "6px 16px",
-            borderRadius: 6,
-            fontSize: 14,
-            fontWeight: 500,
-            textDecoration: "none",
-            background: activePage === l.page ? colors.orangeLight : "transparent",
-            color: activePage === l.page ? colors.orange : colors.muted,
-            transition: "all 0.15s",
-          }}>
-            {l.label}
+        <nav className="hidden items-center gap-8 md:flex">
+          <a href="#features" className="text-slate-300 transition hover:text-cyan-400">
+            Features
           </a>
-        ))}
-      </div>
+          <a href="#how-it-works" className="text-slate-300 transition hover:text-cyan-400">
+            How it Works
+          </a>
+          <a href="#cta" className="text-slate-300 transition hover:text-cyan-400">
+            Get Started
+          </a>
+        </nav>
 
-      {/* CTA */}
-      <button style={{
-        background: colors.dark,
-        color: colors.white,
-        border: "none",
-        padding: "9px 22px",
-        borderRadius: 7,
-        fontSize: 14,
-        fontWeight: 600,
-        cursor: "pointer",
-        fontFamily: fonts.display,
-      }}>
-        Upgrade Pro
-      </button>
-    </nav>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/login"
+            className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:border-cyan-400"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="rounded-xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+          >
+            Sign Up
+          </Link>
+        </div>
+      </div>
+    </header>
   );
 }
