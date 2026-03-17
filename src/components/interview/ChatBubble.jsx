@@ -1,4 +1,4 @@
-import { colors, fonts } from "../../styles/theme";
+import { colors } from "../../styles/theme";
 
 export default function ChatBubble({ role = "ai", text = "", timestamp, isTyping = false }) {
   const isAI = role === "ai";

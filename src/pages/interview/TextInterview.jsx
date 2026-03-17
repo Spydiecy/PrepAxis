@@ -91,7 +91,7 @@ export default function TextInterview() {
     <>
       <style>{globalCss}</style>
       <div style={{ minHeight: "100vh", background: colors.bg, display: "flex", flexDirection: "column" }}>
-        <Navbar activePage="interview" />
+        <Navbar />
 
         {/* Session header */}
         <div style={{

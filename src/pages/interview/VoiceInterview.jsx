@@ -101,7 +101,7 @@ export default function VoiceInterview() {
     <>
       <style>{globalCss}</style>
       <div style={{ minHeight: "100vh", background: colors.bg }}>
-        <Navbar activePage="voice" />
+        <Navbar />
 
         {/* Session info bar */}
         <div style={{

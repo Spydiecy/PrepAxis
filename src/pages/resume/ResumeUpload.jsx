@@ -35,7 +35,7 @@ export default function ResumeUpload({ onSubmit }) {
     <>
       <style>{globalCss}</style>
       <div style={{ minHeight: "100vh", background: colors.bg }}>
-        <Navbar activePage="resume" />
+        <Navbar />
 
         <div style={{ maxWidth: 760, margin: "0 auto", padding: "60px 24px" }}>
 

@@ -40,7 +40,7 @@ export default function ResumeSuggestions({ onBack, onProceed }) {
     <>
       <style>{globalCss}</style>
       <div style={{ minHeight: "100vh", background: colors.bg }}>
-        <Navbar activePage="resume" />
+        <Navbar />
 
         {/* Top banner */}
         <div style={{

@@ -46,7 +46,7 @@ export default function Report({ onRetry }) {
     <>
       <style>{globalCss}</style>
       <div style={{ minHeight: "100vh", background: colors.bg }}>
-        <Navbar activePage="report" />
+        <Navbar />
 
         {/* Report header */}
         <div style={{
