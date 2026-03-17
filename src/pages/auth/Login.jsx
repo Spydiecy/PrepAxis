@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-export default function Login() {
-  return <div></div>;
-}
-=======
 import { useState } from "react";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -86,4 +81,3 @@ export default function Login() {
     </div>
   );
 }
->>>>>>> bavan
