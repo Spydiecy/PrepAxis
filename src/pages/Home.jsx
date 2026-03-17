@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import {
   Mic,
   FileText,
@@ -8,10 +7,8 @@ import {
   Brain,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  Target,
-  Clock3,
 } from "lucide-react";
+import { colors, fonts } from "../styles/theme";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 
@@ -59,7 +56,7 @@ const highlights = [
   "Resume improvement suggestions",
   "Detailed report generation",
   "Clean dashboard for tracking growth",
-  "Modern AI-first user experience",
+  "AI-powered experience",
   "Built for students and job seekers",
 ];
 
@@ -72,99 +69,382 @@ const stats = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0a0f1c] text-white">
+    <div style={{ minHeight: "100vh", background: colors.bg, width: "100%", overflowX: "hidden" }}>
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-purple-500/10 blur-3xl" />
-        <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-28">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <div>
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300">
-                <Sparkles size={16} />
-                AI Interview Preparation Platform
+      <section style={{ padding: "60px 24px", width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center", marginBottom: 60 }}>
+          {/* Left */}
+          <div>
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              background: colors.orangeLight,
+              color: colors.orange,
+              padding: "8px 16px",
+              borderRadius: 99,
+              fontSize: 12,
+              fontWeight: 600,
+              marginBottom: 24,
+              fontFamily: fonts.display,
+            }}>
+              ✨ AI Interview Preparation
+            </div>
+
+            <h1 style={{
+              fontSize: 56,
+              fontWeight: 800,
+              lineHeight: 1.2,
+              color: colors.dark,
+              fontFamily: fonts.display,
+              marginBottom: 24,
+            }}>
+              Master Interviews with <span style={{ color: colors.orange }}>PrepAI</span>
+            </h1>
+
+            <p style={{
+              fontSize: 16,
+              color: colors.muted,
+              lineHeight: 1.6,
+              marginBottom: 32,
+              fontFamily: fonts.body,
+            }}>
+              PrepAI is an intelligent interview preparation platform that helps you improve interview performance through AI-powered mock interviews, resume analysis, detailed feedback, and progress tracking — all in one place.
+            </p>
+
+            <div style={{ display: "flex", gap: 16, marginBottom: 40 }}>
+              <a href="/register" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                background: colors.orange,
+                color: colors.white,
+                padding: "12px 28px",
+                borderRadius: 8,
+                fontWeight: 600,
+                textDecoration: "none",
+                cursor: "pointer",
+                fontSize: 14,
+                fontFamily: fonts.display,
+                transition: "all 0.2s",
+              }}>
+                Start Preparing <ArrowRight size={18} />
+              </a>
+              <a href="/login" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                background: colors.white,
+                color: colors.dark,
+                padding: "12px 28px",
+                borderRadius: 8,
+                fontWeight: 600,
+                textDecoration: "none",
+                cursor: "pointer",
+                fontSize: 14,
+                fontFamily: fonts.display,
+                border: `1px solid ${colors.border}`,
+                transition: "all 0.2s",
+              }}>
+                Login
+              </a>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {highlights.map((item, i) => (
+                <div key={i} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: 12,
+                  background: colors.white,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: 8,
+                  fontSize: 13,
+                  color: colors.dark,
+                  fontFamily: fonts.body,
+                }}>
+                  <CheckCircle2 size={16} color={colors.orange} />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right - Card */}
+          <div style={{
+            background: colors.white,
+            border: `1px solid ${colors.border}`,
+            borderRadius: 16,
+            padding: 24,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          }}>
+            <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: `1px solid ${colors.border}` }}>
+              <p style={{ fontSize: 12, color: colors.muted, fontWeight: 600, marginBottom: 4 }}>LIVE INTERVIEW</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: colors.dark, fontFamily: fonts.display }}>
+                Google Behavioral
+              </h3>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+              <div style={{
+                background: colors.orangeLight,
+                padding: 12,
+                borderRadius: 8,
+                textAlign: "center",
+              }}>
+                <p style={{ fontSize: 24, fontWeight: 800, color: colors.orange, fontFamily: fonts.display }}>84%</p>
+                <p style={{ fontSize: 11, color: colors.orange, marginTop: 4 }}>Overall Score</p>
               </div>
-
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-                Master Interviews with
-                <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  {" "}
-                  PrepAxis
-                </span>
-              </h1>
-
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-                PrepAxis is an intelligent interview preparation platform that
-                helps users improve interview performance through AI-powered
-                mock interviews, resume analysis, detailed feedback, and
-                progress tracking — all in one place.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <Link
-                  to="/register"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-400"
-                >
-                  Start Preparing
-                  <ArrowRight size={18} />
-                </Link>
-
-                <Link
-                  to="/login"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/60 px-6 py-3 font-semibold text-white transition hover:border-cyan-400 hover:bg-slate-800"
-                >
-                  Login
-                </Link>
-              </div>
-
-              <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {highlights.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900/60 px-4 py-3 text-slate-200"
-                  >
-                    <CheckCircle2 size={18} className="text-cyan-400" />
-                    <span>{item}</span>
-                  </div>
-                ))}
+              <div style={{
+                background: colors.greenLight,
+                padding: 12,
+                borderRadius: 8,
+                textAlign: "center",
+              }}>
+                <p style={{ fontSize: 24, fontWeight: 800, color: colors.green, fontFamily: fonts.display }}>8 min</p>
+                <p style={{ fontSize: 11, color: colors.green, marginTop: 4 }}>Avg Response</p>
               </div>
             </div>
 
-            {/* Hero Card */}
-            <div className="relative">
-              <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-2xl backdrop-blur">
-                <div className="mb-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-400">Interview Summary</p>
-                    <h3 className="text-2xl font-semibold">
-                      Software Engineer Mock
-                    </h3>
-                  </div>
-                  <div className="rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-medium text-cyan-300">
-                    AI Evaluated
-                  </div>
-                </div>
+            <div style={{ fontSize: 13, lineHeight: 1.6, color: colors.muted, fontFamily: fonts.body }}>
+              <p style={{ marginBottom: 12 }}>
+                "Great answers! Your STAR framework was clear and well-structured. Focus on quantifying results more."
+              </p>
+              <p style={{ fontWeight: 600, color: colors.dark }}>Next: Tell me about a conflict you resolved...</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-800 bg-[#10182a] p-4">
-                    <p className="text-sm text-slate-400">Confidence Score</p>
-                    <p className="mt-2 text-3xl font-bold text-cyan-400">88%</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-800 bg-[#10182a] p-4">
-                    <p className="text-sm text-slate-400">Answer Clarity</p>
-                    <p className="mt-2 text-3xl font-bold text-blue-400">91%</p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-800 bg-[#10182a] p-4">
-                    <p className="text-sm text-slate-400">Resume Match</p>
-                    <p className="mt-2 text-3xl font-bold text-purple-400">
-                      84%
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-slate-800 bg-[#10182a] p-4">
-                    <p className="text-sm text-slate-400">Improvement Areas</p>
-                    <p className="mt-2 text-lg font-semibold text-slate-200">
-                      HR + Technical
+      {/* Stats Section */}
+      <section style={{
+        padding: "60px 24px",
+        maxWidth: 1200,
+        margin: "0 auto",
+        width: "100%",
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gap: 24,
+        marginBottom: 80,
+      }}>
+        {stats.map((s, i) => (
+          <div key={i} style={{
+            background: colors.white,
+            border: `1px solid ${colors.border}`,
+            borderRadius: 12,
+            padding: 24,
+            textAlign: "center",
+          }}>
+            <p style={{
+              fontSize: 32,
+              fontWeight: 800,
+              color: colors.orange,
+              fontFamily: fonts.display,
+              marginBottom: 8,
+            }}>
+              {s.value}
+            </p>
+            <p style={{ fontSize: 14, color: colors.muted }}>{s.label}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Features Section */}
+      <section style={{ padding: "80px 24px", background: colors.white, borderTop: `1px solid ${colors.border}`, width: "100%", overflowX: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div id="features" style={{ textAlign: "center", marginBottom: 60 }}>
+            <div style={{
+              display: "inline-block",
+              background: colors.orangeLight,
+              color: colors.orange,
+              padding: "6px 12px",
+              borderRadius: 99,
+              fontSize: 12,
+              fontWeight: 600,
+              marginBottom: 16,
+              fontFamily: fonts.display,
+            }}>
+              KEY FEATURES
+            </div>
+            <h2 style={{
+              fontSize: 40,
+              fontWeight: 800,
+              color: colors.dark,
+              fontFamily: fonts.display,
+              marginBottom: 16,
+            }}>
+              Everything You Need to Ace Interviews
+            </h2>
+            <p style={{
+              fontSize: 16,
+              color: colors.muted,
+              maxWidth: 500,
+              margin: "0 auto",
+              fontFamily: fonts.body,
+            }}>
+              Comprehensive tools designed to help you prepare for any interview challenge.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+            {features.map((f, i) => (
+              <div key={i} style={{
+                background: colors.bg,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 12,
+                padding: 28,
+                transition: "all 0.2s",
+              }}>
+                <div style={{ color: colors.orange, marginBottom: 16 }}>{f.icon}</div>
+                <h3 style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: colors.dark,
+                  marginBottom: 10,
+                  fontFamily: fonts.display,
+                }}>
+                  {f.title}
+                </h3>
+                <p style={{
+                  fontSize: 14,
+                  color: colors.muted,
+                  lineHeight: 1.6,
+                  fontFamily: fonts.body,
+                }}>
+                  {f.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" style={{ padding: "80px 24px", background: colors.bg, borderTop: `1px solid ${colors.border}`, width: "100%", overflowX: "hidden" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 60 }}>
+            <div style={{
+              display: "inline-block",
+              background: colors.orangeLight,
+              color: colors.orange,
+              padding: "6px 12px",
+              borderRadius: 99,
+              fontSize: 12,
+              fontWeight: 600,
+              marginBottom: 16,
+              fontFamily: fonts.display,
+            }}>
+              HOW IT WORKS
+            </div>
+            <h2 style={{
+              fontSize: 40,
+              fontWeight: 800,
+              color: colors.dark,
+              fontFamily: fonts.display,
+            }}>
+              A simple flow, built for serious preparation
+            </h2>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+            {[
+              { num: "01", title: "Create your account", desc: "Sign up securely and access your personalized interview prep dashboard." },
+              { num: "02", title: "Practice & upload", desc: "Attempt AI-powered mock interviews and upload your resume for role-specific suggestions." },
+              { num: "03", title: "Track improvement", desc: "Review reports, find weak areas, and improve with structured feedback over time." },
+            ].map((step, i) => (
+              <div key={i} style={{
+                background: colors.white,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 12,
+                padding: 28,
+              }}>
+                <p style={{
+                  fontSize: 32,
+                  fontWeight: 800,
+                  color: colors.orange,
+                  fontFamily: fonts.display,
+                  marginBottom: 16,
+                }}>
+                  {step.num}
+                </p>
+                <h3 style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: colors.dark,
+                  marginBottom: 10,
+                  fontFamily: fonts.display,
+                }}>
+                  {step.title}
+                </h3>
+                <p style={{
+                  fontSize: 14,
+                  color: colors.muted,
+                  lineHeight: 1.6,
+                  fontFamily: fonts.body,
+                }}>
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section id="cta" style={{ padding: "80px 24px", background: colors.bg, width: "100%", overflowX: "hidden" }}>
+        <div style={{
+          maxWidth: 600,
+          margin: "0 auto",
+          textAlign: "center",
+          background: colors.white,
+          border: `1px solid ${colors.border}`,
+          borderRadius: 16,
+          padding: 48,
+        }}>
+          <h2 style={{
+            fontSize: 32,
+            fontWeight: 800,
+            color: colors.dark,
+            fontFamily: fonts.display,
+            marginBottom: 16,
+          }}>
+            Ready to Ace Your Interviews?
+          </h2>
+          <p style={{
+            fontSize: 16,
+            color: colors.muted,
+            marginBottom: 32,
+            fontFamily: fonts.body,
+          }}>
+            Join thousands of students and job seekers preparing smarter with PrepAI.
+          </p>
+          <a href="/register" style={{
+            display: "inline-block",
+            background: colors.orange,
+            color: colors.white,
+            padding: "12px 32px",
+            borderRadius: 8,
+            fontWeight: 700,
+            textDecoration: "none",
+            cursor: "pointer",
+            fontFamily: fonts.display,
+            fontSize: 14,
+            transition: "all 0.2s",
+          }}>
+            Get Started Free
+          </a>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
                     </p>
                   </div>
                 </div>

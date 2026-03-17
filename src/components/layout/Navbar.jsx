@@ -1,46 +1,136 @@
-import { Sparkles } from "lucide-react";
+import { colors, fonts } from "../../styles/theme";
 
 export default function Navbar() {
+  const handleNavClick = (path) => {
+    // Try to scroll to element on current page
+    const element = document.getElementById(path);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // If element doesn't exist, navigate to home with the section
+      window.location.href = `/?section=${path}`;
+    }
+  };
+
+  const handleLogoClick = () => {
+    window.location.href = "/";
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800 bg-[#0a0f1c]/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-        <a href="#" className="flex items-center gap-2">
-          <div className="rounded-xl bg-cyan-400/15 p-2 text-cyan-400">
-            <Sparkles size={20} />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white">PrepAxis</h1>
-            <p className="text-xs text-slate-400">AI Interview Coach</p>
-          </div>
-        </a>
+    <nav style={{
+      background: colors.white,
+      borderBottom: `1px solid ${colors.border}`,
+      padding: "0 48px",
+      height: 64,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      position: "sticky",
+      top: 0,
+      zIndex: 100,
+      boxShadow: "0 1px 0 #e0dfd8",
+    }}>
+      {/* Logo */}
+      <button onClick={handleLogoClick} style={{
+        fontFamily: fonts.display,
+        fontWeight: 800,
+        fontSize: 20,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        cursor: "pointer",
+        border: "none",
+        background: "transparent",
+        color: colors.dark,
+        padding: 0,
+      }}>
+        <div style={{ width: 8, height: 8, borderRadius: "50%", background: colors.orange }} />
+        PrepAI
+      </button>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          <a href="#features" className="text-slate-300 transition hover:text-cyan-400">
-            Features
-          </a>
-          <a href="#how-it-works" className="text-slate-300 transition hover:text-cyan-400">
-            How it Works
-          </a>
-          <a href="#cta" className="text-slate-300 transition hover:text-cyan-400">
-            Get Started
-          </a>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <a
-            href="#login"
-            className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:border-cyan-400"
-          >
-            Login
-          </a>
-          <a
-            href="#register"
-            className="rounded-xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
-          >
-            Sign Up
-          </a>
-        </div>
+      {/* Nav Links */}
+      <div style={{ display: "flex", gap: 4 }}>
+        <button onClick={() => handleNavClick("features")} style={{
+          padding: "6px 16px",
+          borderRadius: 6,
+          fontSize: 14,
+          fontWeight: 500,
+          textDecoration: "none",
+          color: colors.muted,
+          transition: "all 0.15s",
+          cursor: "pointer",
+          border: "none",
+          background: "transparent",
+          fontFamily: fonts.body,
+        }}>
+          Features
+        </button>
+        <button onClick={() => handleNavClick("how-it-works")} style={{
+          padding: "6px 16px",
+          borderRadius: 6,
+          fontSize: 14,
+          fontWeight: 500,
+          textDecoration: "none",
+          color: colors.muted,
+          transition: "all 0.15s",
+          cursor: "pointer",
+          border: "none",
+          background: "transparent",
+          fontFamily: fonts.body,
+        }}>
+          How it Works
+        </button>
+        <button onClick={() => handleNavClick("cta")} style={{
+          padding: "6px 16px",
+          borderRadius: 6,
+          fontSize: 14,
+          fontWeight: 500,
+          textDecoration: "none",
+          color: colors.muted,
+          transition: "all 0.15s",
+          cursor: "pointer",
+          border: "none",
+          background: "transparent",
+          fontFamily: fonts.body,
+        }}>
+          Get Started
+        </button>
       </div>
-    </header>
+
+      {/* CTA */}
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <button onClick={() => window.location.href = "/login"} style={{
+          padding: "8px 16px",
+          borderRadius: 6,
+          fontSize: 14,
+          fontWeight: 600,
+          textDecoration: "none",
+          color: colors.muted,
+          transition: "all 0.15s",
+          cursor: "pointer",
+          background: "transparent",
+          border: "none",
+          fontFamily: fonts.body,
+        }}>
+          Login
+        </button>
+        <button onClick={() => window.location.href = "/register"} style={{
+          background: colors.orange,
+          color: colors.white,
+          border: "none",
+          padding: "9px 22px",
+          borderRadius: 7,
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: "pointer",
+          fontFamily: fonts.display,
+          transition: "all 0.15s",
+          textDecoration: "none",
+          display: "inline-block",
+        }}>
+          Sign Up
+        </button>
+      </div>
+    </nav>
   );
 }
