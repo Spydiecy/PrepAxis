@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileCheck, Zap, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -45,19 +45,19 @@ const ResumePage: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  // Fetch past reviews from Firestore database for this user
+  const loadHistory = useCallback(async () => {
+    if (!userId) return;
+    const reviews = await getReviewHistory(userId, 5);
+    setHistory(reviews);
+  }, [userId]);
+
   // Load review history when user ID is available
   useEffect(() => {
     if (userId) {
       loadHistory();
     }
-  }, [userId]);
-
-  // Fetch past reviews from Firestore database for this user
-  const loadHistory = async () => {
-    if (!userId) return;
-    const reviews = await getReviewHistory(userId, 5);
-    setHistory(reviews);
-  };
+  }, [userId, loadHistory]);
 
   // When user selects a file from input
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

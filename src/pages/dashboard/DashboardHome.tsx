@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, TrendingUp, Zap, FileText, ArrowRight, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -22,21 +22,21 @@ const DashboardHome: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  // Load recent resume reviews when user ID is available
-  useEffect(() => {
-    if (userId) {
-      loadReviews();
-    }
-  }, [userId]);
-
   // Fetch recent reviews from Firestore
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     setLoading(true);
     if (!userId) return;
     const reviews = await getReviewHistory(userId, 3);
     setRecentReviews(reviews);
     setLoading(false);
-  };
+  }, [userId]);
+
+  // Load recent resume reviews when user ID is available
+  useEffect(() => {
+    if (userId) {
+      loadReviews();
+    }
+  }, [userId, loadReviews]);
 
   return (
     <div>

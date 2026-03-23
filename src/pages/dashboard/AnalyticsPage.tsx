@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Award, Target, Zap, Mic } from 'lucide-react';
 import {
@@ -43,15 +43,8 @@ const AnalyticsPage: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  // Load reviews and calculate stats when user ID is available
-  useEffect(() => {
-    if (userId) {
-      loadReviewsAndStats();
-    }
-  }, [userId]);
-
   // Fetch reviews and calculate statistics
-  const loadReviewsAndStats = async () => {
+  const loadReviewsAndStats = useCallback(async () => {
     setLoading(true);
     if (!userId) return;
 
@@ -89,7 +82,14 @@ const AnalyticsPage: React.FC = () => {
     });
 
     setLoading(false);
-  };
+  }, [userId]);
+
+  // Load reviews and calculate stats when user ID is available
+  useEffect(() => {
+    if (userId) {
+      loadReviewsAndStats();
+    }
+  }, [userId, loadReviewsAndStats]);
 
   const renderStatCard = (title: string, value: string | number, icon: React.ReactNode, isTrend = false) => {
     let borderClass = 'border-gray-300';
