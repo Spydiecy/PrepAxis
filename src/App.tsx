@@ -13,14 +13,19 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Home page */}
         <Route path="/" element={<MynaHero />} />
+        
+        {/* Login page */}
         <Route path="/login" element={<LoginPage />} />
+        
+        {/* Dashboard with nested routes */}
         <Route path="/dashboard" element={<Dashboard />}>
-          <Route index element={<DashboardHome />} />
-          <Route path="interview" element={<InterviewPage />} />
-          <Route path="resume" element={<ResumePage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route index element={<DashboardHome />} />          {/* /dashboard = home */}
+          <Route path="interview" element={<InterviewPage />} /> {/* /dashboard/interview */}
+          <Route path="resume" element={<ResumePage />} />       {/* /dashboard/resume */}
+          <Route path="analytics" element={<AnalyticsPage />} /> {/* /dashboard/analytics */}
+          <Route path="settings" element={<SettingsPage />} />   {/* /dashboard/settings */}
         </Route>
       </Routes>
     </BrowserRouter>

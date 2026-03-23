@@ -15,6 +15,7 @@ import {
   Home,
   HelpCircle,
   ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 
 interface User {
@@ -27,11 +28,23 @@ interface User {
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // State: Current logged-in user info
   const [user, setUser] = useState<User | null>(null);
+  
+  // State: Show loading spinner while checking authentication
   const [loading, setLoading] = useState(true);
+  
+  // State: Mobile sidebar is open/closed (for mobile menu)
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // State: Desktop sidebar is expanded/collapsed
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  
+  // State: Track which navigation item is currently selected
   const [activeNav, setActiveNav] = useState('dashboard');
 
+  // Navigation menu items
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home, onClick: () => navigate('/dashboard') },
     { id: 'interview', label: 'Start Interview', icon: Mic, onClick: () => navigate('/dashboard/interview') },
@@ -40,14 +53,16 @@ const Dashboard: React.FC = () => {
     { id: 'settings', label: 'Settings', icon: Settings, onClick: () => navigate('/dashboard/settings') },
   ];
 
+  // When page loads or location changes
   useEffect(() => {
+    // Get user from localStorage (saved during login)
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
     setLoading(false);
 
-    // Update active nav based on current path
+    // Update active nav item based on current URL
     const path = location.pathname;
     if (path === '/dashboard' || path === '/dashboard/') {
       setActiveNav('dashboard');
@@ -62,16 +77,21 @@ const Dashboard: React.FC = () => {
     }
   }, [location.pathname]);
 
+  // Sign out user and go to login page
   const handleLogout = async () => {
     try {
+      // Sign out from Firebase
       await signOut(auth);
+      // Remove user from local storage
       localStorage.removeItem('user');
+      // Redirect to login
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
+  // Show loading spinner while checking login status
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -84,6 +104,7 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  // If no user logged in, redirect to login
   if (!user) {
     navigate('/login');
     return null;
@@ -91,90 +112,114 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar - Fixed, No Scrolling */}
+      {/* Sidebar - Fixed, Collapsible */}
       <div
-        className={`fixed md:relative w-64 h-screen bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 md:translate-x-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed md:relative h-screen bg-white border-r border-gray-200 z-50 transform transition-all duration-300 md:translate-x-0 overflow-hidden ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        } ${sidebarExpanded ? 'w-64' : 'w-20'}`}
       >
         {/* Sidebar Content - All fixed height sections */}
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col overflow-hidden">
           {/* Sidebar Header */}
-          <div className="p-6 border-b border-gray-200 flex-shrink-0">
-            <div className="flex items-center gap-3 mb-4">
-              <Bird className="h-8 w-8 text-[#FF6B2C]" />
-              <span className="font-mono text-xl font-bold">PrepAxis</span>
-            </div>
+          <div className="p-4 border-b border-gray-200 flex-shrink-0 flex items-center justify-between">
+            {sidebarExpanded && (
+              <div className="flex items-center gap-2">
+                <Bird className="h-7 w-7 text-[#FF6B2C] flex-shrink-0" />
+                <span className="font-mono text-lg font-bold whitespace-nowrap">PrepAxis</span>
+              </div>
+            )}
+            {!sidebarExpanded && (
+              <Bird className="h-7 w-7 text-[#FF6B2C]" />
+            )}
+            <button
+              onClick={() => setSidebarExpanded(!sidebarExpanded)}
+              className="hidden md:flex p-1 hover:bg-gray-100 rounded"
+            >
+              {sidebarExpanded ? (
+                <ChevronLeft className="h-5 w-5 text-gray-600" />
+              ) : (
+                <ChevronRight className="h-5 w-5 text-gray-600" />
+              )}
+            </button>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="md:hidden absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-lg"
+              className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
           {/* User Profile Section */}
-          <div className="p-6 border-b border-gray-200 flex-shrink-0">
-            <div className="flex items-start gap-3">
-              {user.photoURL && (
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName || 'User'}
-                  className="w-12 h-12 rounded-full border-2 border-[#FF6B2C] flex-shrink-0"
-                />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-mono font-bold truncate">
-                  {user.displayName || user.email}
-                </p>
-                <p className="text-xs font-mono text-gray-600 line-clamp-2">{user.email}</p>
+          {sidebarExpanded && (
+            <div className="p-4 border-b border-gray-200 flex-shrink-0">
+              <div className="flex items-start gap-2">
+                {user.photoURL && (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName || 'User'}
+                    className="w-10 h-10 rounded-full border-2 border-[#FF6B2C] flex-shrink-0"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-mono font-bold truncate">
+                    {user.displayName || user.email}
+                  </p>
+                  <p className="text-xs font-mono text-gray-600 line-clamp-2">{user.email}</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Navigation - Fixed Height, No Scroll */}
-          <nav className="flex-1 p-4 space-y-2 overflow-hidden">
+          <nav className="flex-1 p-3 space-y-1 overflow-hidden">
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <motion.button
                   key={item.id}
-                  whileHover={{ x: 5 }}
+                  whileHover={{ x: sidebarExpanded ? 5 : 0 }}
                   onClick={() => {
                     item.onClick();
                     setActiveNav(item.id);
                     setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-sm font-bold transition-all ${
+                  title={!sidebarExpanded ? item.label : ''}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono font-bold transition-all ${
                     activeNav === item.id
-                      ? 'bg-[#FF6B2C]/10 text-[#FF6B2C] border-l-4 border-[#FF6B2C]'
+                      ? 'bg-[#FF6B2C]/10 text-[#FF6B2C] border-l-4 border-[#FF6B2C] pl-2 md:pl-2'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span className="flex-1 text-left">{item.label}</span>
-                  {activeNav === item.id && <ChevronRight className="h-4 w-4 flex-shrink-0" />}
+                  {sidebarExpanded && (
+                    <span className="flex-1 text-left text-sm">{item.label}</span>
+                  )}
+                  {sidebarExpanded && activeNav === item.id && (
+                    <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                  )}
                 </motion.button>
               );
             })}
           </nav>
 
           {/* Help & Logout - Fixed at Bottom */}
-          <div className="border-t border-gray-200 p-4 space-y-2 flex-shrink-0">
+          <div className="border-t border-gray-200 px-3 py-2 space-y-1 flex-shrink-0">
             <motion.button
               whileHover={{ scale: 1.02 }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-sm text-gray-700 hover:bg-gray-100 transition-all"
+              title={!sidebarExpanded ? 'Help & Support' : ''}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-sm font-bold text-gray-700 hover:bg-gray-100 transition-all"
             >
               <HelpCircle className="h-5 w-5 flex-shrink-0" />
-              <span>Help & Support</span>
+              {sidebarExpanded && <span>Help & Support</span>}
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02 }}
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-sm text-red-600 hover:bg-red-50 transition-all border border-red-200"
+              title={!sidebarExpanded ? 'Logout' : ''}
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-sm font-bold text-red-600 hover:bg-red-50 transition-all border border-red-200"
             >
               <LogOut className="h-5 w-5 flex-shrink-0" />
-              <span>Logout</span>
+              {sidebarExpanded && <span>Logout</span>}
             </motion.button>
           </div>
         </div>
@@ -207,7 +252,7 @@ const Dashboard: React.FC = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4">
           <Outlet />
         </main>
       </div>
