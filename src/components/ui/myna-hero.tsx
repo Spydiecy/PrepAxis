@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Link } from "react-router-dom";
 import { ArrowRight, Bird, Menu, CheckCircle2 } from "lucide-react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import { Sheet, SheetContent, SheetTrigger } from "./sheet";
@@ -38,9 +39,11 @@ function NavigationBar() {
 
         {/* CTA & Mobile Menu */}
         <div className="flex items-center space-x-4">
-          <Button className="hidden md:inline-flex rounded-none font-mono">
-            GET STARTED <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
+          <Link to="/login">
+            <Button className="hidden md:inline-flex rounded-none font-mono">
+              GET STARTED <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </Link>
 
           <Sheet>
             <SheetTrigger asChild>
@@ -59,9 +62,11 @@ function NavigationBar() {
                     {item.title}
                   </a>
                 ))}
-                <Button className="w-full rounded-none font-mono">
-                  GET STARTED <ArrowRight className="ml-1 h-4 w-4" />
-                </Button>
+                <Link to="/login" className="block">
+                  <Button className="w-full rounded-none font-mono">
+                    GET STARTED <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>
@@ -85,7 +90,7 @@ function HeroSection() {
         >
           {HERO_TITLE_WORDS.map((text, index) => (
             <motion.span
-              key={index}
+              key={text}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.15, duration: 0.6 }}
@@ -143,9 +148,11 @@ function HeroSection() {
             stiffness: 100,
           }}
         >
-          <Button size="lg" className="mt-12 rounded-none font-mono">
-            START FREE TRIAL <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
+          <Link to="/login">
+            <Button size="lg" className="mt-12 rounded-none font-mono">
+              TRY NOW <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -264,16 +271,18 @@ function PricingSection() {
               <span className="text-sm font-mono text-muted-foreground">{plan.period}</span>
             </div>
 
-            <Button
-              className="w-full rounded-none font-mono mb-8"
-              variant={plan.highlighted ? "default" : "outline"}
-            >
-              Get Started
-            </Button>
+            <Link to="/login" className="w-full block">
+              <Button
+                className="w-full rounded-none font-mono mb-8"
+                variant={plan.highlighted ? "default" : "outline"}
+              >
+                Get Started
+              </Button>
+            </Link>
 
             <div className="space-y-3 flex-grow">
-              {plan.features.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3">
+              {plan.features.map((feature) => (
+                <div key={feature} className="flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: PRIMARY_COLOR }} />
                   <span className="text-sm font-mono">{feature}</span>
                 </div>
@@ -298,9 +307,11 @@ function CTASection() {
         <h2 className="text-3xl md:text-4xl font-mono font-bold mb-6">
           Ready to transform your interview skills?
         </h2>
-        <Button size="lg" className="rounded-none font-mono">
-          LAUNCH APP <ArrowRight className="ml-1 h-4 w-4" />
-        </Button>
+        <Link to="/login">
+          <Button size="lg" className="rounded-none font-mono">
+            LAUNCH APP <ArrowRight className="ml-1 h-4 w-4" />
+          </Button>
+        </Link>
       </motion.div>
     </section>
   );
