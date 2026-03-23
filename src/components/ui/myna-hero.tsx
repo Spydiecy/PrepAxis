@@ -12,6 +12,7 @@ import {
   Mic,
   FileText,
   TrendingUp,
+  CheckCircle2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "./sheet";
 import { motion, useAnimation, useInView } from "framer-motion";
@@ -19,9 +20,7 @@ import { Button } from "./button";
 
 const navigationItems = [
   { title: "FEATURES", href: "#features" },
-  { title: "HOW IT WORKS", href: "#how-it-works" },
   { title: "PRICING", href: "#pricing" },
-  { title: "ABOUT", href: "#about" },
 ];
 
 const labels = [
@@ -60,6 +59,50 @@ const features = [
     icon: Activity,
     label: "Interview Preparation",
     description: "Master the STAR method and behavioral interview techniques.",
+  },
+];
+
+const pricingPlans = [
+  {
+    name: "Starter",
+    price: "$9",
+    period: "/month",
+    description: "Perfect for beginners",
+    features: [
+      "5 mock interviews per month",
+      "Resume analysis",
+      "Basic feedback",
+      "Email support",
+    ],
+  },
+  {
+    name: "Professional",
+    price: "$29",
+    period: "/month",
+    description: "For serious learners",
+    features: [
+      "Unlimited mock interviews",
+      "Advanced resume analysis",
+      "AI-powered detailed feedback",
+      "Priority email support",
+      "Interview performance analytics",
+      "STAR method masterclass",
+    ],
+    highlighted: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    period: "",
+    description: "For teams & organizations",
+    features: [
+      "Everything in Professional",
+      "Team management",
+      "Custom integrations",
+      "24/7 phone support",
+      "Dedicated account manager",
+      "API access",
+    ],
   },
 ];
 
@@ -277,6 +320,90 @@ export function MynaHero() {
                 <p className="text-muted-foreground font-mono text-sm leading-relaxed">
                   {feature.description}
                 </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* Pricing Section */}
+        <section className="container py-32" id="pricing">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 4.0, duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-mono font-bold mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-lg text-muted-foreground font-mono max-w-2xl mx-auto">
+              Choose the plan that works best for your interview preparation journey
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 4.2, duration: 0.6 }}
+            className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          >
+            {pricingPlans.map((plan, index) => (
+              <motion.div
+                key={plan.name}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 4.2 + index * 0.15,
+                  duration: 0.6,
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 10,
+                }}
+                className={`relative rounded-lg p-8 border transition-all duration-300 flex flex-col ${
+                  plan.highlighted
+                    ? "border-[#FF6B2C] bg-[#FF6B2C]/5 scale-105"
+                    : "border-gray-200 hover:border-[#FF6B2C]/50"
+                }`}
+              >
+                {plan.highlighted && (
+                  <div className="absolute top-4 right-4 bg-[#FF6B2C] text-white font-mono text-xs px-3 py-1 rounded-full">
+                    POPULAR
+                  </div>
+                )}
+                <h3 className="text-2xl font-mono font-bold mb-2">
+                  {plan.name}
+                </h3>
+                <p className="text-muted-foreground font-mono text-sm mb-4">
+                  {plan.description}
+                </p>
+                <div className="mb-6">
+                  <span className="text-4xl font-mono font-bold">
+                    {plan.price}
+                  </span>
+                  <span className="text-muted-foreground font-mono text-sm">
+                    {plan.period}
+                  </span>
+                </div>
+                <Button
+                  className={`w-full rounded-none font-mono mb-8 ${
+                    plan.highlighted
+                      ? "bg-[#FF6B2C] hover:bg-[#FF6B2C]/90"
+                      : "border-[#FF6B2C] text-[#FF6B2C] hover:bg-[#FF6B2C]/10"
+                  }`}
+                  variant={plan.highlighted ? "default" : "outline"}
+                >
+                  Get Started
+                </Button>
+                <div className="space-y-3 flex-grow">
+                  {plan.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-[#FF6B2C] flex-shrink-0 mt-0.5" />
+                      <span className="text-sm font-mono text-foreground">
+                        {feature}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             ))}
           </motion.div>
