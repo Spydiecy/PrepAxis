@@ -42,7 +42,7 @@ const ResumePage: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     
-    if (!files || !files[0]) return;
+    if (!files?.[0]) return;
     
     const selectedFile = files[0];
     
@@ -193,7 +193,7 @@ const ResumePage: React.FC = () => {
               </div>
               <ul className="space-y-2">
                 {result.suggestions.map((suggestion, i) => (
-                  <li key={i} className="font-mono text-xs text-gray-700 flex gap-2">
+                  <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
                     <span className="text-[#FF6B2C]">•</span>
                     <span>{suggestion}</span>
                   </li>
@@ -212,7 +212,7 @@ const ResumePage: React.FC = () => {
               </div>
               <ul className="space-y-2">
                 {result.updates.map((update, i) => (
-                  <li key={i} className="font-mono text-xs text-gray-700 flex gap-2">
+                  <li key={`update-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
                     <span className="text-[#FF6B2C]">→</span>
                     <span>{update}</span>
                   </li>

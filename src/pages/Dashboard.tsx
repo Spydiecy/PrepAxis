@@ -183,7 +183,7 @@ const Dashboard: React.FC = () => {
                     setActiveNav(item.id);
                     setSidebarOpen(false);
                   }}
-                  title={!sidebarExpanded ? item.label : ''}
+                  title={sidebarExpanded ? '' : item.label}
                   className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono font-bold transition-all ${
                     activeNav === item.id
                       ? 'bg-[#FF6B2C]/10 text-[#FF6B2C] border-l-4 border-[#FF6B2C] pl-2 md:pl-2'
@@ -206,7 +206,7 @@ const Dashboard: React.FC = () => {
           <div className="border-t border-gray-200 px-3 py-2 space-y-1 flex-shrink-0">
             <motion.button
               whileHover={{ scale: 1.02 }}
-              title={!sidebarExpanded ? 'Help & Support' : ''}
+              title={sidebarExpanded ? '' : 'Help & Support'}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-sm font-bold text-gray-700 hover:bg-gray-100 transition-all"
             >
               <HelpCircle className="h-5 w-5 flex-shrink-0" />
@@ -215,7 +215,7 @@ const Dashboard: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               onClick={handleLogout}
-              title={!sidebarExpanded ? 'Logout' : ''}
+              title={sidebarExpanded ? '' : 'Logout'}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-sm font-bold text-red-600 hover:bg-red-50 transition-all border border-red-200"
             >
               <LogOut className="h-5 w-5 flex-shrink-0" />
@@ -229,7 +229,15 @@ const Dashboard: React.FC = () => {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          role="button"
+          tabIndex={0}
           onClick={() => setSidebarOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setSidebarOpen(false);
+            }
+          }}
         />
       )}
 

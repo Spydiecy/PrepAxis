@@ -64,8 +64,9 @@ const SettingsPage: React.FC = () => {
 
             <div className="space-y-2 pl-7">
               <div className="flex items-center justify-between">
-                <label className="font-mono text-xs">Email Notifications</label>
+                <div className="font-mono text-xs">Email Notifications</div>
                 <button
+                  aria-label="Toggle email notifications"
                   onClick={() => toggleSetting('emailNotifications')}
                   className={`w-10 h-5 rounded-full transition-colors ${
                     settings.emailNotifications ? 'bg-[#FF6B2C]' : 'bg-gray-300'
@@ -79,8 +80,9 @@ const SettingsPage: React.FC = () => {
                 </button>
               </div>
               <div className="flex items-center justify-between">
-                <label className="font-mono text-xs">Push Notifications</label>
+                <div className="font-mono text-xs">Push Notifications</div>
                 <button
+                  aria-label="Toggle push notifications"
                   onClick={() => toggleSetting('pushNotifications')}
                   className={`w-10 h-5 rounded-full transition-colors ${
                     settings.pushNotifications ? 'bg-[#FF6B2C]' : 'bg-gray-300'

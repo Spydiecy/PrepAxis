@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, query, getDocs, orderBy, limit } from 'firebase/firestore';
 import { db } from './firebase';
 
 // Type describing one review record stored in database

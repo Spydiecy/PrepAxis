@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mic, TrendingUp, Zap, FileText, ArrowRight, LogIn } from 'lucide-react';
+import { Mic, TrendingUp, Zap, FileText, ArrowRight } from 'lucide-react';
 
 const DashboardHome: React.FC = () => {
   return (
