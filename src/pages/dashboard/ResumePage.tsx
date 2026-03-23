@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileCheck, Zap, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
 import { analyzeResumeWithGemini } from '../../services/geminiService';
 import { storeReviewTimestamp, getReviewHistory, ResumeReviewRecord } from '../../services/firestoreService';
 
@@ -12,6 +14,9 @@ interface AnalysisResult {
 }
 
 const ResumePage: React.FC = () => {
+  // State: Track the current user ID from Firebase Auth
+  const [userId, setUserId] = useState<string | null>(null);
+  
   // State: Track the selected PDF file
   const [file, setFile] = useState<File | null>(null);
   
@@ -26,15 +31,31 @@ const ResumePage: React.FC = () => {
   
   // State: Store list of past reviews from Firestore
   const [history, setHistory] = useState<ResumeReviewRecord[]>([]);
+  
+  // State: Track which previous review is selected to view details
+  const [selectedReview, setSelectedReview] = useState<ResumeReviewRecord | null>(null);
 
-  // Load review history when page first loads
+  // Get current user ID when component loads
   useEffect(() => {
-    loadHistory();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid); // Store user ID
+      }
+    });
+    return unsubscribe;
   }, []);
 
-  // Fetch past reviews from Firestore database
+  // Load review history when user ID is available
+  useEffect(() => {
+    if (userId) {
+      loadHistory();
+    }
+  }, [userId]);
+
+  // Fetch past reviews from Firestore database for this user
   const loadHistory = async () => {
-    const reviews = await getReviewHistory(5);
+    if (!userId) return;
+    const reviews = await getReviewHistory(userId, 5);
     setHistory(reviews);
   };
 
@@ -65,6 +86,12 @@ const ResumePage: React.FC = () => {
       setError('Please select a file first');
       return;
     }
+    
+    // Check if user is authenticated
+    if (!userId) {
+      setError('You must be logged in to analyze resumes');
+      return;
+    }
 
     // Show loading state
     setAnalyzing(true);
@@ -82,8 +109,14 @@ const ResumePage: React.FC = () => {
         updates: analysis.updates,
       });
 
-      // Step 3: Save review to Firestore (for college project documentation)
-      await storeReviewTimestamp(analysis.atsScore, file.name);
+      // Step 3: Save review to Firestore with user ID and additional details
+      await storeReviewTimestamp(
+        userId,
+        analysis.atsScore,
+        file.name,
+        analysis.atsDetails,
+        analysis.suggestions
+      );
       
       // Step 4: Refresh the history list
       await loadHistory();
@@ -96,6 +129,20 @@ const ResumePage: React.FC = () => {
       // Hide loading state
       setAnalyzing(false);
     }
+  };
+
+  // When user clicks on a previous review
+  const handleOpenReview = (review: ResumeReviewRecord) => {
+    // Convert the stored review into result format to display
+    setSelectedReview(review);
+    setResult({
+      atsScore: review.atsScore,
+      atsDetails: review.summary,
+      suggestions: review.suggestions,
+      updates: [], // Previous reviews don't have updates stored, so empty array
+    });
+    // Clear file selection since we're viewing a previous review
+    setFile(null);
   };
 
   return (
@@ -160,104 +207,222 @@ const ResumePage: React.FC = () => {
           </button>
         )}
 
-        {/* Results Section */}
-        {result && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-3"
-          >
-            {/* ATS Score */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              className="border-2 border-[#FF6B2C] rounded-lg p-4 bg-[#FF6B2C]/5"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-mono font-bold text-sm">ATS Score</h3>
-                <CheckCircle className="h-5 w-5 text-[#FF6B2C]" />
-              </div>
-              <p className="text-3xl font-mono font-bold text-[#FF6B2C] mb-2">
-                {result.atsScore}%
-              </p>
-              <p className="font-mono text-xs text-gray-600">{result.atsDetails}</p>
-            </motion.div>
-
-            {/* Suggestions */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <Zap className="h-4 w-4 text-[#FF6B2C]" />
-                <h3 className="font-mono font-bold text-sm">Suggestions</h3>
-              </div>
-              <ul className="space-y-2">
-                {result.suggestions.map((suggestion, i) => (
-                  <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
-                    <span className="text-[#FF6B2C]">•</span>
-                    <span>{suggestion}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Updates */}
-            <motion.div
-              whileHover={{ scale: 1.01 }}
-              className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50"
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <FileCheck className="h-4 w-4 text-[#FF6B2C]" />
-                <h3 className="font-mono font-bold text-sm">Recommended Updates</h3>
-              </div>
-              <ul className="space-y-2">
-                {result.updates.map((update, i) => (
-                  <li key={`update-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
-                    <span className="text-[#FF6B2C]">→</span>
-                    <span>{update}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* New Analysis Button */}
-            <button
-              onClick={() => {
-                setResult(null);
-                setFile(null);
-              }}
-              className="w-full font-mono font-bold text-sm py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Analyze Another Resume
-            </button>
-          </motion.div>
-        )}
-
-        {/* Review History */}
+        {/* Review History - Display Below Upload Box */}
         {history.length > 0 && !result && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50 mt-3"
+            className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50 mb-3"
           >
             <div className="flex items-center gap-2 mb-3">
               <Clock className="h-4 w-4 text-gray-600" />
-              <h3 className="font-mono font-bold text-sm">Recent Reviews</h3>
+              <h3 className="font-mono font-bold text-sm">Your Previous Reviews</h3>
             </div>
             <div className="space-y-2">
               {history.map((review) => (
-                <div key={review.id} className="flex items-center justify-between p-2 bg-white rounded border border-gray-200">
-                  <div>
-                    <p className="font-mono text-xs font-semibold">{review.fileName}</p>
-                    <p className="font-mono text-xs text-gray-500">
-                      {review.timestamp.toLocaleDateString()} {review.timestamp.toLocaleTimeString()}
-                    </p>
+                <motion.div
+                  key={review.id}
+                  whileHover={{ scale: 1.01 }}
+                  onClick={() => handleOpenReview(review)}
+                  className="p-3 bg-white rounded border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="font-mono text-xs font-semibold text-gray-800">{review.fileName}</p>
+                      <p className="font-mono text-xs text-gray-500 mt-1">
+                        {review.timestamp.toLocaleDateString()} • {review.timestamp.toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <span className="font-mono text-sm font-bold text-[#FF6B2C] ml-2">{review.atsScore}%</span>
                   </div>
-                  <span className="font-mono text-sm font-bold text-[#FF6B2C]">{review.atsScore}%</span>
-                </div>
+                  {review.summary && (
+                    <p className="font-mono text-xs text-gray-600 mb-2">{review.summary.substring(0, 100)}...</p>
+                  )}
+                  {review.suggestions.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {review.suggestions.slice(0, 2).map((suggestion, i) => (
+                        <span key={i} className="inline-block bg-[#FF6B2C]/10 text-[#FF6B2C] text-xs font-mono px-2 py-1 rounded">
+                          {suggestion.substring(0, 30)}...
+                        </span>
+                      ))}
+                      {review.suggestions.length > 2 && (
+                        <span className="inline-block text-xs font-mono text-gray-500 px-2 py-1">
+                          +{review.suggestions.length - 2} more
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
               ))}
             </div>
           </motion.div>
+        )}
+
+        {/* Results Section */}
+        {result && (
+          <>
+            {/* Modal Overlay for Previous Reviews */}
+            {selectedReview && (
+              <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4" onClick={() => {
+                setSelectedReview(null);
+                setResult(null);
+              }}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto z-50"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="p-6 space-y-3">
+                    {/* Close Button */}
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="font-mono font-bold text-base">Review Details</h2>
+                      <button
+                        onClick={() => {
+                          setSelectedReview(null);
+                          setResult(null);
+                        }}
+                        className="text-gray-500 hover:text-gray-700 font-bold text-lg"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* File Info */}
+                    <div className="border-2 border-gray-300 rounded-lg p-3 bg-gray-50">
+                      <p className="font-mono text-xs font-semibold text-gray-800">{selectedReview.fileName}</p>
+                      <p className="font-mono text-xs text-gray-500 mt-1">
+                        {selectedReview.timestamp.toLocaleDateString()} • {selectedReview.timestamp.toLocaleTimeString()}
+                      </p>
+                    </div>
+
+                    {/* ATS Score */}
+                    <motion.div
+                      whileHover={{ scale: 1.01 }}
+                      className="border-2 border-[#FF6B2C] rounded-lg p-4 bg-[#FF6B2C]/5"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-mono font-bold text-sm">ATS Score</h3>
+                        <CheckCircle className="h-5 w-5 text-[#FF6B2C]" />
+                      </div>
+                      <p className="text-3xl font-mono font-bold text-[#FF6B2C] mb-2">
+                        {result.atsScore}%
+                      </p>
+                      <p className="font-mono text-xs text-gray-600">{result.atsDetails}</p>
+                    </motion.div>
+
+                    {/* Suggestions */}
+                    {selectedReview.suggestions.length > 0 && (
+                      <motion.div
+                        whileHover={{ scale: 1.01 }}
+                        className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <Zap className="h-4 w-4 text-[#FF6B2C]" />
+                          <h3 className="font-mono font-bold text-sm">Suggestions</h3>
+                        </div>
+                        <ul className="space-y-2">
+                          {selectedReview.suggestions.map((suggestion, i) => (
+                            <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                              <span className="text-[#FF6B2C]">•</span>
+                              <span>{suggestion}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    )}
+
+                    {/* Close Button */}
+                    <button
+                      onClick={() => {
+                        setSelectedReview(null);
+                        setResult(null);
+                      }}
+                      className="w-full font-mono font-bold text-sm py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
+            {/* New Analysis Results (not from previous review) */}
+            {!selectedReview && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-3"
+              >
+                {/* ATS Score */}
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="border-2 border-[#FF6B2C] rounded-lg p-4 bg-[#FF6B2C]/5"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-mono font-bold text-sm">ATS Score</h3>
+                    <CheckCircle className="h-5 w-5 text-[#FF6B2C]" />
+                  </div>
+                  <p className="text-3xl font-mono font-bold text-[#FF6B2C] mb-2">
+                    {result.atsScore}%
+                  </p>
+                  <p className="font-mono text-xs text-gray-600">{result.atsDetails}</p>
+                </motion.div>
+
+                {/* Suggestions */}
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap className="h-4 w-4 text-[#FF6B2C]" />
+                    <h3 className="font-mono font-bold text-sm">Suggestions</h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {result.suggestions.map((suggestion, i) => (
+                      <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                        <span className="text-[#FF6B2C]">•</span>
+                        <span>{suggestion}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+
+                {/* Updates */}
+                {result.updates.length > 0 && (
+                  <motion.div
+                    whileHover={{ scale: 1.01 }}
+                    className="border-2 border-gray-300 rounded-lg p-4 bg-gray-50"
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileCheck className="h-4 w-4 text-[#FF6B2C]" />
+                      <h3 className="font-mono font-bold text-sm">Recommended Updates</h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {result.updates.map((update, i) => (
+                        <li key={`update-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                          <span className="text-[#FF6B2C]">→</span>
+                          <span>{update}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+
+                {/* New Analysis Button */}
+                <button
+                  onClick={() => {
+                    setResult(null);
+                    setFile(null);
+                    setSelectedReview(null);
+                  }}
+                  className="w-full font-mono font-bold text-sm py-2 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Analyze Another Resume
+                </button>
+              </motion.div>
+            )}
+          </>
         )}
       </motion.div>
     </div>

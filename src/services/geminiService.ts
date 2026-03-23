@@ -48,7 +48,7 @@ Return ONLY valid JSON:
 }`;
 
     // Build the API request URL
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY as string}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY as string}`;
     
     // Send the PDF and prompt to Gemini API
     const response = await fetch(apiUrl, {

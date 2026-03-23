@@ -1,25 +1,37 @@
-import { collection, addDoc, query, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, query, getDocs, orderBy, limit, where } from 'firebase/firestore';
 import { db } from './firebase';
 
 // Type describing one review record stored in database
 export interface ResumeReviewRecord {
   id?: string;              // Unique document ID from Firestore
+  userId: string;           // User ID from Firebase Auth (to fetch only their reviews)
   timestamp: Date;          // When the review was created
   atsScore: number;         // The ATS score from Gemini
   fileName: string;         // Name of the PDF file analyzed
+  summary: string;          // Short summary from ATS details
+  suggestions: string[];    // Array of suggestions from Gemini
 }
 
 // Save a review result to Firestore database
-export const storeReviewTimestamp = async (atsScore: number, fileName: string) => {
+export const storeReviewTimestamp = async (
+  userId: string,
+  atsScore: number,
+  fileName: string,
+  summary: string,
+  suggestions: string[]
+) => {
   try {
     // Get reference to the "resumeReviews" collection in database
     const reviewsRef = collection(db, 'resumeReviews');
     
     // Add a new document with the review data
     const docRef = await addDoc(reviewsRef, {
+      userId: userId,           // User ID for filtering later
       timestamp: new Date(),    // Current time
       atsScore: atsScore,       // Score from Gemini
       fileName: fileName,       // PDF file name
+      summary: summary,         // ATS details from Gemini
+      suggestions: suggestions, // Array of suggestions from Gemini
     });
     
     // Return the unique ID of the document just created
@@ -30,18 +42,19 @@ export const storeReviewTimestamp = async (atsScore: number, fileName: string) =
   }
 };
 
-// Fetch the 5 most recent reviews from Firestore
-export const getReviewHistory = async (limit_count: number = 5) => {
+// Fetch the 5 most recent reviews for a specific user from Firestore
+export const getReviewHistory = async (userId: string, limit_count: number = 5) => {
   try {
     // Get reference to the "resumeReviews" collection
     const reviewsRef = collection(db, 'resumeReviews');
     
     // Build a query: 
-    // - Get documents from reviewsRef
+    // - Get documents from reviewsRef where userId matches
     // - Sort by timestamp (newest first)
     // - Limit to N results
     const q = query(
       reviewsRef,
+      where('userId', '==', userId),
       orderBy('timestamp', 'desc'),
       limit(limit_count)
     );
@@ -55,10 +68,13 @@ export const getReviewHistory = async (limit_count: number = 5) => {
       const data = doc.data();
       reviews.push({
         id: doc.id,
+        userId: data.userId,
         // Convert Firestore timestamp to JavaScript Date
         timestamp: data.timestamp?.toDate?.() || new Date(data.timestamp),
         atsScore: data.atsScore,
         fileName: data.fileName,
+        summary: data.summary || '',
+        suggestions: data.suggestions || [],
       });
     });
     
