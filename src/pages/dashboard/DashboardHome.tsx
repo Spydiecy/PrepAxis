@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mic, TrendingUp, Zap, FileText, ArrowRight } from 'lucide-react';
+import { Mic, TrendingUp, Zap, FileText, ArrowRight, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../lib/firebase';
+import { getReviewHistory, ResumeReviewRecord } from '../../services/firestoreService';
 
 const DashboardHome: React.FC = () => {
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [recentReviews, setRecentReviews] = useState<ResumeReviewRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Get current user ID when component loads
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // Load recent resume reviews when user ID is available
+  useEffect(() => {
+    if (userId) {
+      loadReviews();
+    }
+  }, [userId]);
+
+  // Fetch recent reviews from Firestore
+  const loadReviews = async () => {
+    setLoading(true);
+    if (!userId) return;
+    const reviews = await getReviewHistory(userId, 3);
+    setRecentReviews(reviews);
+    setLoading(false);
+  };
+
   return (
     <div>
       {/* Welcome Section */}
@@ -25,6 +60,7 @@ const DashboardHome: React.FC = () => {
         className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3"
       >
         <motion.button
+          onClick={() => navigate('/dashboard/interview')}
           whileHover={{ scale: 1.02, y: -5 }}
           className="group border-2 border-[#FF6B2C] rounded-lg p-4 bg-[#FF6B2C]/5 hover:bg-[#FF6B2C]/10 transition-all text-left"
         >
@@ -39,6 +75,7 @@ const DashboardHome: React.FC = () => {
         </motion.button>
 
         <motion.button
+          onClick={() => navigate('/dashboard/resume')}
           whileHover={{ scale: 1.02, y: -5 }}
           className="group border-2 border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 hover:border-[#FF6B2C] transition-all text-left"
         >
@@ -53,6 +90,7 @@ const DashboardHome: React.FC = () => {
         </motion.button>
 
         <motion.button
+          onClick={() => navigate('/dashboard/analytics')}
           whileHover={{ scale: 1.02, y: -5 }}
           className="group border-2 border-gray-300 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 hover:border-[#FF6B2C] transition-all text-left"
         >
@@ -67,30 +105,66 @@ const DashboardHome: React.FC = () => {
         </motion.button>
       </motion.div>
 
-      {/* Empty State for Recent Interviews */}
+      {/* Recent Reviews Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
         <div className="mb-2">
-          <h3 className="text-lg font-mono font-bold mb-1">Recent Interviews</h3>
+          <h3 className="text-lg font-mono font-bold mb-1">Recent Resume Reviews</h3>
           <p className="font-mono text-xs text-gray-600">
-            Review your recent practice sessions and track improvements
+            Your latest AI-powered resume analyses
           </p>
         </div>
 
-        <motion.div
-          whileHover={{ scale: 1.01 }}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center"
-        >
-          <Zap className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-          <p className="font-mono text-sm font-semibold text-gray-600 mb-1">No interviews yet</p>
-          <p className="font-mono text-xs text-gray-500 mb-3">Start your first interview to see results here</p>
-          <button className="font-mono font-bold text-sm text-[#FF6B2C] hover:text-[#d95500]">
-            Start Practice →
-          </button>
-        </motion.div>
+        {loading ? (
+          <motion.div className="border-2 border-gray-300 rounded-lg p-6 bg-gray-50 text-center">
+            <p className="font-mono text-sm text-gray-600">Loading reviews...</p>
+          </motion.div>
+        ) : recentReviews.length > 0 ? (
+          <div className="space-y-2">
+            {recentReviews.map((review) => (
+              <motion.div
+                key={review.id}
+                whileHover={{ scale: 1.01 }}
+                onClick={() => navigate('/dashboard/resume')}
+                className="border-2 border-gray-300 rounded-lg p-3 bg-white hover:bg-gray-50 cursor-pointer transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-mono text-xs font-semibold text-gray-800">{review.fileName}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Clock className="h-3 w-3 text-gray-500" />
+                      <p className="font-mono text-xs text-gray-500">
+                        {review.timestamp.toLocaleDateString()} • {review.timestamp.toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right ml-2">
+                    <p className="font-mono text-sm font-bold text-[#FF6B2C]">{review.atsScore}%</p>
+                    <p className="font-mono text-xs text-gray-500">ATS Score</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center"
+          >
+            <Zap className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+            <p className="font-mono text-sm font-semibold text-gray-600 mb-1">No reviews yet</p>
+            <p className="font-mono text-xs text-gray-500 mb-3">Upload your resume to get AI-powered feedback</p>
+            <button
+              onClick={() => navigate('/dashboard/resume')}
+              className="font-mono font-bold text-sm text-[#FF6B2C] hover:text-[#d95500]"
+            >
+              Start Review →
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
