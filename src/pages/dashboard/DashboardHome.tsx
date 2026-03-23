@@ -118,56 +118,76 @@ const DashboardHome: React.FC = () => {
           </p>
         </div>
 
-        {loading ? (
-          <motion.div className="border-2 border-gray-300 rounded-lg p-6 bg-gray-50 text-center">
-            <p className="font-mono text-sm text-gray-600">Loading reviews...</p>
-          </motion.div>
-        ) : recentReviews.length > 0 ? (
-          <div className="space-y-2">
-            {recentReviews.map((review) => (
-              <motion.div
-                key={review.id}
-                whileHover={{ scale: 1.01 }}
-                onClick={() => navigate('/dashboard/resume')}
-                className="border-2 border-gray-300 rounded-lg p-3 bg-white hover:bg-gray-50 cursor-pointer transition-all"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="font-mono text-xs font-semibold text-gray-800">{review.fileName}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Clock className="h-3 w-3 text-gray-500" />
-                      <p className="font-mono text-xs text-gray-500">
-                        {review.timestamp.toLocaleDateString()} • {review.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right ml-2">
-                    <p className="font-mono text-sm font-bold text-[#FF6B2C]">{review.atsScore}%</p>
-                    <p className="font-mono text-xs text-gray-500">ATS Score</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center"
-          >
-            <Zap className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-            <p className="font-mono text-sm font-semibold text-gray-600 mb-1">No reviews yet</p>
-            <p className="font-mono text-xs text-gray-500 mb-3">Upload your resume to get AI-powered feedback</p>
-            <button
-              onClick={() => navigate('/dashboard/resume')}
-              className="font-mono font-bold text-sm text-[#FF6B2C] hover:text-[#d95500]"
-            >
-              Start Review →
-            </button>
-          </motion.div>
-        )}
+        {renderRecentReviews()}
       </motion.div>
     </div>
   );
+
+  function renderRecentReviews() {
+    if (loading) {
+      return (
+        <motion.div className="border-2 border-gray-300 rounded-lg p-6 bg-gray-50 text-center">
+          <p className="font-mono text-sm text-gray-600">Loading reviews...</p>
+        </motion.div>
+      );
+    }
+
+    if (recentReviews.length > 0) {
+      return (
+        <div className="space-y-2">
+          {recentReviews.map((review) => (
+            <motion.div
+              key={review.id}
+              whileHover={{ scale: 1.01 }}
+              onClick={() => navigate('/dashboard/resume')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate('/dashboard/resume');
+                }
+              }}
+              className="border-2 border-gray-300 rounded-lg p-3 bg-white hover:bg-gray-50 cursor-pointer transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="font-mono text-xs font-semibold text-gray-800">{review.fileName}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Clock className="h-3 w-3 text-gray-500" />
+                    <p className="font-mono text-xs text-gray-500">
+                      {review.timestamp.toLocaleDateString()} • {review.timestamp.toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right ml-2">
+                  <p className="font-mono text-sm font-bold text-[#FF6B2C]">{review.atsScore}%</p>
+                  <p className="font-mono text-xs text-gray-500">ATS Score</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <motion.div
+        whileHover={{ scale: 1.01 }}
+        className="border-2 border-dashed border-gray-300 rounded-lg p-6 bg-gray-50 text-center"
+      >
+        <Zap className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+        <p className="font-mono text-sm font-semibold text-gray-600 mb-1">No reviews yet</p>
+        <p className="font-mono text-xs text-gray-500 mb-3">Upload your resume to get AI-powered feedback</p>
+        <button
+          onClick={() => navigate('/dashboard/resume')}
+          className="font-mono font-bold text-sm text-[#FF6B2C] hover:text-[#d95500]"
+        >
+          Start Review →
+        </button>
+      </motion.div>
+    );
+  }
 };
 
 export default DashboardHome;

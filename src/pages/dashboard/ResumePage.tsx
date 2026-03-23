@@ -241,7 +241,7 @@ const ResumePage: React.FC = () => {
                   {review.suggestions.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {review.suggestions.slice(0, 2).map((suggestion, i) => (
-                        <span key={i} className="inline-block bg-[#FF6B2C]/10 text-[#FF6B2C] text-xs font-mono px-2 py-1 rounded">
+                        <span key={`${review.id}-suggestion-${i}`} className="inline-block bg-[#FF6B2C]/10 text-[#FF6B2C] text-xs font-mono px-2 py-1 rounded">
                           {suggestion.substring(0, 30)}...
                         </span>
                       ))}
@@ -263,14 +263,21 @@ const ResumePage: React.FC = () => {
           <>
             {/* Modal Overlay for Previous Reviews */}
             {selectedReview && (
-              <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4" onClick={() => {
-                setSelectedReview(null);
-                setResult(null);
-              }}>
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 bg-black/50 z-40"
+                  onClick={() => {
+                    setSelectedReview(null);
+                    setResult(null);
+                  }}
+                  aria-label="Close modal"
+                />
+                <div className="fixed inset-0 z-40 flex items-center justify-center p-4 pointer-events-none">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto z-50"
+                  className="bg-white rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto z-50 pointer-events-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <div className="p-6 space-y-3">
@@ -323,7 +330,7 @@ const ResumePage: React.FC = () => {
                         </div>
                         <ul className="space-y-2">
                           {selectedReview.suggestions.map((suggestion, i) => (
-                            <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                            <li key={`${selectedReview.id}-suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
                               <span className="text-[#FF6B2C]">•</span>
                               <span>{suggestion}</span>
                             </li>
@@ -345,6 +352,7 @@ const ResumePage: React.FC = () => {
                   </div>
                 </motion.div>
               </div>
+              </>
             )}
 
             {/* New Analysis Results (not from previous review) */}
@@ -379,8 +387,8 @@ const ResumePage: React.FC = () => {
                     <h3 className="font-mono font-bold text-sm">Suggestions</h3>
                   </div>
                   <ul className="space-y-2">
-                    {result.suggestions.map((suggestion, i) => (
-                      <li key={`suggestion-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                    {result.suggestions.map((suggestion) => (
+                      <li key={`result-suggestion-${suggestion.substring(0, 20)}`} className="font-mono text-xs text-gray-700 flex gap-2">
                         <span className="text-[#FF6B2C]">•</span>
                         <span>{suggestion}</span>
                       </li>
@@ -399,8 +407,8 @@ const ResumePage: React.FC = () => {
                       <h3 className="font-mono font-bold text-sm">Recommended Updates</h3>
                     </div>
                     <ul className="space-y-2">
-                      {result.updates.map((update, i) => (
-                        <li key={`update-${i}`} className="font-mono text-xs text-gray-700 flex gap-2">
+                      {result.updates.map((update) => (
+                        <li key={`result-update-${update.substring(0, 20)}`} className="font-mono text-xs text-gray-700 flex gap-2">
                           <span className="text-[#FF6B2C]">→</span>
                           <span>{update}</span>
                         </li>

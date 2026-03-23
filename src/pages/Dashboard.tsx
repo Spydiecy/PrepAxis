@@ -227,17 +227,11 @@ const Dashboard: React.FC = () => {
 
       {/* Overlay for mobile */}
       {sidebarOpen && (
-        <div
+        <button
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          role="button"
-          tabIndex={0}
+          type="button"
           onClick={() => setSidebarOpen(false)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              setSidebarOpen(false);
-            }
-          }}
+          aria-label="Close sidebar"
         />
       )}
 
