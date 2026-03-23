@@ -147,7 +147,7 @@ export function MynaHero() {
 
       <main>
         {/* Hero Section */}
-        <section className="container py-24">
+        <section className="container py-32">
           <div className="flex flex-col items-center text-center">
             {/* Main Title */}
             <motion.h1
@@ -225,14 +225,14 @@ export function MynaHero() {
                 size="lg"
                 className="cursor-pointer rounded-none mt-12 bg-[#FF6B2C] hover:bg-[#FF6B2C]/90 font-mono"
               >
-                START FREE TRIAL <ArrowRight className="ml-1 w-4 h-4" />
+                TRY NOW <ArrowRight className="ml-1 w-4 h-4" />
               </Button>
             </motion.div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="container" ref={ref}>
+        <section className="container py-32" ref={ref}>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -243,7 +243,7 @@ export function MynaHero() {
               stiffness: 100,
               damping: 10
             }}
-            className="text-center text-4xl font-mono font-bold mb-6"
+            className="text-center text-4xl font-mono font-bold mb-16"
             id="features"
           >
             Everything You Need to Succeed
@@ -283,7 +283,7 @@ export function MynaHero() {
         </section>
 
         {/* CTA Section */}
-        <section className="container py-24 text-center">
+        <section className="container py-40 text-center">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -296,17 +296,17 @@ export function MynaHero() {
               size="lg"
               className="cursor-pointer rounded-none bg-[#FF6B2C] hover:bg-[#FF6B2C]/90 font-mono"
             >
-              START YOUR FREE TRIAL <ArrowRight className="ml-1 w-4 h-4" />
+              LAUNCH APP <ArrowRight className="ml-1 w-4 h-4" />
             </Button>
           </motion.div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t py-8 mt-12">
+      <footer className="border-t py-12 mt-20">
         <div className="container flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm font-mono text-muted-foreground">
-            © 2024 PrepAxis. All rights reserved.
+            © 2026 PrepAxis. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <button className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
