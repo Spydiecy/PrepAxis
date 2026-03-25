@@ -1,5 +1,9 @@
 # PrepAxis — AI Interview Coach
 
+<div align="center">
+  <img src="public/logo.png" alt="PrepAxis Logo" width="120" height="120">
+</div>
+
 An intelligent interview preparation platform that helps users improve their interview skills through AI-powered feedback, resume analysis, and mock interviews. Built as a college project to demonstrate modern web development practices and AI integration.
 
 ## ✨ Features
