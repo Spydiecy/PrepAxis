@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
-import { getReviewHistory, ResumeReviewRecord } from '../../services/firestoreService';
+import { getReviewHistory, ResumeReviewRecord } from '../../services/apiService';
 
 // Helper function to get trend color classes
 const getTrendColorClasses = (trend: number) => {

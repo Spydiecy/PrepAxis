@@ -4,7 +4,7 @@ import { Mic, TrendingUp, Zap, FileText, ArrowRight, Clock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
-import { getReviewHistory, ResumeReviewRecord } from '../../services/firestoreService';
+import { getReviewHistory, ResumeReviewRecord } from '../../services/apiService';
 
 const DashboardHome: React.FC = () => {
   const navigate = useNavigate();

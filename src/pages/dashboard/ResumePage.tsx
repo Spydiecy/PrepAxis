@@ -4,7 +4,7 @@ import { Upload, FileCheck, Zap, AlertCircle, CheckCircle, Clock } from 'lucide-
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { analyzeResumeWithGemini } from '../../services/geminiService';
-import { storeReviewTimestamp, getReviewHistory, ResumeReviewRecord } from '../../services/firestoreService';
+import { storeReviewTimestamp, getReviewHistory, ResumeReviewRecord } from '../../services/apiService';
 
 interface AnalysisResult {
   atsScore: number;
