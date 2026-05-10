@@ -1,33 +1,27 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-
-// Firebase configuration - loaded from .env file
 const firebaseConfig = {
-  apiKey: "AIzaSyB0JnxQTNkBu0_m_UEFBC00okVTwsFPLSE", 
+  apiKey: "AIzaSyB0JnxQTNkBu0_m_UEFBC00okVTwsFPLSE",
   authDomain: "my-fse-project-2dea0.firebaseapp.com",
   projectId: "my-fse-project-2dea0",
   storageBucket: "my-fse-project-2dea0.firebasestorage.app",
   messagingSenderId: "836301378993",
   appId: "1:836301378993:web:ae60f9563bfcbd7434d990"
 };
-// Initialize the Firebase app
+
+// Initialize Firebase app (single instance)
 const app = initializeApp(firebaseConfig);
 
-
-
-// Initialize Firebase Authentication
-// This is exported so other files can use it for login/signup
+// Firebase Authentication
 export const auth = getAuth(app);
 
-// Initialize Google Sign-In provider
-// This allows users to sign in with their Google account
-export const googleProvider = new GoogleAuthProvider();
+// Firestore Database
+export const db = getFirestore(app);
 
-// Configure Google Sign-In to show account selection
-// "select_account" means user sees the account picker every time
-googleProvider.setCustomParameters({
-  prompt: 'select_account',
-});
+// Google Sign-In Provider
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export default app;
