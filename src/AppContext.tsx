@@ -204,7 +204,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   });
 
   // Apply dark mode on mount
-  useEffect(() => { applyDark(darkMode); }, []);
+  useEffect(() => { 
+  applyDark(darkMode); 
+}, [darkMode]);
 
   const toggleDarkMode = () => {
     const next = !darkMode;
